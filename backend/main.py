@@ -1,7 +1,37 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import select
+from typing import Optional, Annotated
+from pydantic import BaseModel
 
+
+engine = create_async_engine('sqlite+aiosqlite:///todolist.db')
+
+
+new_session = async_sessionmaker(engine, expire_on_commit=False)
+
+
+async def get_session():
+    async with new_session() as session:
+        yield session
+
+
+SessionDep = Annotated[AsyncSession, Depends(get_session)]
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+class TodoModel(Base):
+    __tablename__ = "todos"
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str]
+    description: Mapped[Optional[str]] = mapped_column(default=None)
 
 app = FastAPI()
 
@@ -14,7 +44,6 @@ origins = [
 ]
 
 
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,       
@@ -23,10 +52,39 @@ app.add_middleware(
     allow_headers=["*"],         
 )
 
+@app.post("/setup_database")
+async def setup_database():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
+    return {"ok": True}
 
-@app.get("/")
-def check():
-    return {"msg": "hello world"}
+
+class TodoAddSchema(BaseModel):
+    title: str
+    description: str
+    
+
+class TodoSchema(TodoAddSchema):
+    id: int
+
+
+@app.post("/todos", name="Создать новую задачу")
+async def add_todo(data: TodoAddSchema, session: SessionDep):
+    new_todo = TodoModel(
+        title=data.title,
+        description=data.description,
+    )
+    session.add(new_todo)
+    await session.commit()
+    return {"ok": True}
+
+
+@app.get("/todos", name="Получить все задачи")
+async def get_todo(session: SessionDep):
+    query = select(TodoModel)
+    result = await session.execute(query)
+    return result.scalars() .all()
 
 
 if __name__ == "__main__":
