@@ -5,6 +5,68 @@
 }
 
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5f5f5;
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.header {
+  background-color: #000000;
+  padding: 10px 20px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 800px;
+  margin: 20px auto;
+}
+
+.header .title {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header .title a {
+  text-decoration: none;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.add-btn {
+  background-color: #ffffff;
+  color: #000000 !important;
+  padding: 8px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+}
+
+.header .logo {
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  gap: 10px;
+}
+
+.logo-image {
+  width: 32px;
+  height: 32px;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+}
+
+.task .title {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  color: #000000;
+}
+
+.task {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: #302a2a;
 }
