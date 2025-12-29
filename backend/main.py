@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from typing import Optional, Annotated
 from pydantic import BaseModel
 
@@ -87,5 +87,16 @@ async def get_todo(session: SessionDep):
     return result.scalars() .all()
 
 
+@app.delete("/todos/{todo_id}", name="Удалить задачу") 
+async def delete_todo(todo_id: int, session: SessionDep):
+    todo = await session.get(TodoModel, todo_id)
+    if not todo:
+        return {"ok": False, "msg": "Задача не найдена"}
+    stmt = delete(TodoModel).where(TodoModel.id == todo_id)
+    await session.execute(stmt)
+    await session.commit()
+    return {"ok": True}
+    
+          
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
