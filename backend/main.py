@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import select, delete
 from typing import Optional, Annotated
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 engine = create_async_engine('sqlite+aiosqlite:///todolist.db')
@@ -61,8 +61,8 @@ async def setup_database():
 
 
 class TodoAddSchema(BaseModel):
-    title: str
-    description: str
+    title: str = Field(min_length=1, max_length=100)
+    description: Optional[str] = Field(None, max_length=1000)
     
 
 class TodoSchema(TodoAddSchema):
