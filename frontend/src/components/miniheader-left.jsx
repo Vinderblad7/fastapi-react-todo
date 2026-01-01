@@ -1,9 +1,9 @@
 import React from "react";
 
-function MiniHeader() {
+function MiniHeaderLeft() {
   return (
-    <header className="mini-header">
-      <nav className="mini-header-title">
+    <header className="mini-header-left">
+      <nav className="mini-header-left-title">
         <a className="remind-btn" href="/notifications">
           Уведомления
         </a>
@@ -15,4 +15,4 @@ function MiniHeader() {
   );
 }
 
-export default MiniHeader;
+export default MiniHeaderLeft;

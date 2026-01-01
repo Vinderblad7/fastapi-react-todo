@@ -3,8 +3,8 @@ import Header from "./components/header";
 import TodoItem from "./components/todoitem";
 import PSP from "./assets/PSP.jpg";
 import SH from "./assets/SH.jpg";
-import MiniHeader from "./components/miniheader";
 import LeftSidebar from "./components/leftsidebar";
+import RightSidebar from "./components/rightsidebar";
 
 function App() {
   return (
@@ -28,7 +28,8 @@ function App() {
           />
         </div>
       </main>
-      <aside className="sidebar-right"></aside>
+
+      <RightSidebar />
     </div>
   );
 }
